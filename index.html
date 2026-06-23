@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codeforces 231A - Team</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-section {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px 0;
+            font-weight: bold;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+        }
+        .error {
+            color: #d32f2f;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 4px;
+            display: none;
+        }
+        .error.show {
+            display: block;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #1565c0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Codeforces 231A - Team</h1>
+        
+        <div class="info">
+            <strong>Problem:</strong> Three friends will solve a problem if at least 2 of them are sure about the solution.
+        </div>
+
+        <div class="input-section">
+            <label for="input">Enter input (first line: n, then n lines with 3 integers):</label>
+            <textarea id="input" placeholder="3
+1 1 0
+1 1 1
+1 0 0"></textarea>
+        </div>
+
+        <button onclick="solve()">Solve</button>
+
+        <div class="error" id="error"></div>
+        <div class="result" id="result">
+            <div>Number of problems they will solve:</div>
+            <div class="result-value" id="resultValue"></div>
+        </div>
+    </div>
+
+    <script>
+        function solve() {
+            const input = document.getElementById('input').value.trim();
+            const errorDiv = document.getElementById('error');
+            const resultDiv = document.getElementById('result');
+            
+            errorDiv.classList.remove('show');
+            resultDiv.classList.remove('show');
+
+            try {
+                const lines = input.split('\n').map(line => line.trim()).filter(line => line);
+                
+                if (lines.length === 0) {
+                    throw new Error('Input cannot be empty');
+                }
+
+                const n = parseInt(lines[0]);
+                
+                if (isNaN(n) || n < 1 || n > 1000) {
+                    throw new Error('n must be between 1 and 1000');
+                }
+
+                if (lines.length !== n + 1) {
+                    throw new Error(`Expected ${n + 1} lines, got ${lines.length}`);
+                }
+
+                let count = 0;
+                
+                for (let i = 1; i <= n; i++) {
+                    const values = lines[i].split(/\s+/).map(v => parseInt(v));
+                    
+                    if (values.length !== 3) {
+                        throw new Error(`Line ${i + 1}: Expected 3 values, got ${values.length}`);
+                    }
+
+                    for (let j = 0; j < 3; j++) {
+                        if (values[j] !== 0 && values[j] !== 1) {
+                            throw new Error(`Line ${i + 1}: Each value must be 0 or 1`);
+                        }
+                    }
+
+                    // Count how many friends are sure
+                    const sum = values[0] + values[1] + values[2];
+                    if (sum >= 2) {
+                        count++;
+                    }
+                }
+
+                document.getElementById('resultValue').textContent = count;
+                resultDiv.classList.add('show');
+
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+                errorDiv.classList.add('show');
+            }
+        }
+
+        // Allow Enter key to solve
+        document.getElementById('input').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                solve();
+            }
+        });
+    </script>
+</body>
+</html>
